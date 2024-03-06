@@ -7,14 +7,19 @@ TEQUILA_API_KEY = "API_KEY"
 
 class FlightSearch:
 
-    def get_destination_code(self, city_name):
+    def __init__(self):
+        self.city_codes = []
+
+    def get_destination_code(self, city_names):
         location_endpoint = f"{TEQUILA_ENDPOINT}/locations/query"
         headers = {"apikey": TEQUILA_API_KEY}
-        query = {"term": city_name, "location_types": "city"}
-        response = requests.get(url=location_endpoint, headers=headers, params=query)
-        results = response.json()["locations"]
-        code = results[0]["code"]
-        return code
+        for city in city_names:
+            query = {"term": city, "location_types": "city"}
+            response = requests.get(url=location_endpoint, headers=headers, params=query)
+            results = response.json()["locations"]
+            code = results[0]["code"]
+            self.city_codes.append(code)
+        return self.city_codes
 
     def check_flights(self, origin_city_code, destination_city_code, from_time, to_time):
         headers = {"apikey": TEQUILA_API_KEY}
